@@ -1,0 +1,9 @@
+{% extends "pricecheck/base.html" %}
+   {% load static %}
+    {% block content %}
+<form action="" method="post">
+    {% csrf_token %}
+    <p>Sure you want to delete?</p>
+    <input type="submit" value="Delete">
+</form>
+{% endblock content %}

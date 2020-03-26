@@ -1,0 +1,21 @@
+
+{% extends "pricecheck/base.html" %}
+
+   {% load static %}
+    {% block content %}
+    <div class="row">
+        <div class="col">
+            {% if registered %}
+                <h1>Thank you for registering!</h1>
+            {% else %}
+            <h1>Register here!</h1>
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ user_form.as_p }}
+                <input type="submit" name="" value="Register">
+            </form>
+          {% endif %}
+        </div>
+    </div>
+
+    {% endblock content %}

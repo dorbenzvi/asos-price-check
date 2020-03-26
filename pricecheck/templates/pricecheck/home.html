@@ -1,0 +1,38 @@
+
+{% extends "pricecheck/base.html" %}
+
+   {% load static %}
+    {% block content %}
+
+    <div>
+
+    </div>
+    <div align="center" class="row">
+    <div class="col">
+    <form method="post">{{form.as_p}}
+        {% csrf_token %}
+    <button type="submit" class="btn btn-primary">Get Price</button>
+    </form>
+</div>
+    </div>
+        <div align="center" class="row">
+        {% if error %}
+            <script>alert("Please check the url!")</script>
+            {% endif %}
+         {% if alerts %}
+              {% for i in alerts %}
+                {% if user.email == i.user_Email %}
+                  <div id="{{ i.id }}" class="col-12 alertbox">
+
+                      <P><b><u>Product name:</u></b> {{ i.product_name }}</P>
+                      <p><u><b>Product link:</b></u> <a target="_blank" href="{{ i.product_url }}">Link To Product On Asos</a> </p>
+                      <p><b><u>Product price:</u></b> {{ i.product_price }}$</p>
+                        <a href="{% url "delete" i.id %}">delete</a>
+                  </div>
+            {% endif %}
+              {% endfor %}
+          {% endif %}
+
+        </div>
+
+    {% endblock content %}
