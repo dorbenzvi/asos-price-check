@@ -11,7 +11,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 from time import sleep
-
+from pricecheck.sendMail import sendEmail
 
 def activate():
     t = threading.Thread(name='scraper', target=checkPriceDrop)
@@ -20,21 +20,20 @@ def activate():
 
 
 def home(request):
-
-    allAlerts_list = Alert.objects.all()
+    all_alerts_list = Alert.objects.all()
     alert_list = Alert.objects.all()
     date_dict = {'alerts': alert_list}
     form = forms.createAlert()
     if request.method == 'POST':
         form = forms.createAlert(request.POST)
         if form.is_valid():
-            if(check_Url(form.cleaned_data['product_url'])):
+            if check_Url(form.cleaned_data['product_url']):
                 price = getProductprice(form.cleaned_data['product_url'])
                 p = Alert(None, form.cleaned_data['product_name'], form.cleaned_data['product_url'], price,request.user.email)
                 p.save()
             else:
-                return render(request, 'pricecheck/home.html', context={'error':"Url Error",'form': form, 'alerts': allAlerts_list})
-    return render(request, 'pricecheck/home.html', context={'form': form, 'alerts': allAlerts_list})
+                return render(request, 'pricecheck/home.html', context={'error':"Url Error",'form': form, 'alerts': all_alerts_list})
+    return render(request, 'pricecheck/home.html', context={'form': form, 'alerts': all_alerts_list})
 
 
 def about(request):
@@ -61,7 +60,7 @@ def getProductprice(product_url):
     newProducturl = "https://www.asos.com/api/product/catalogue/v3/stockprice?productIds="+productId+"&store=ROW&currency=USD&keyStoreDataversion=ekbycqu-23"
     response = urllib.request.urlopen(newProducturl)
     data = json.loads(response.read())
-    return int(data[0]['productPrice']['current']['value'])
+    return float(data[0]['productPrice']['current']['value'])
 
 
 def getProductid(product_url):
@@ -83,20 +82,20 @@ def check_Url(url):
 def register(request):
     registered = False
 
-    if(request.method=="POST"):
+    if request.method == "POST":
         user_form = UserForm(data=request.POST)
 
         if user_form.is_valid():
             user = user_form.save()
             user.set_password(user.password)
             user.save()
-            registered=True
+            registered = True
         else:
             print(user_form.errors)
     else:
         user_form = UserForm()
 
-    return render(request, 'pricecheck/register.html',{'user_form':user_form,'registered':registered})
+    return render(request, 'pricecheck/register.html', {'user_form':user_form, 'registered': registered})
 
 @login_required
 def user_logout(request):
@@ -110,7 +109,7 @@ def user_login(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        user = authenticate(username=username,password=password)
+        user = authenticate(username=username, password=password)
 
         if user:
             if user.is_active:
@@ -127,13 +126,16 @@ def user_login(request):
 
 
 def checkPriceDrop():
-    while(True):
-        print("found one")
+    while True:
+        sleep(3600)
         alert_list = Alert.objects.all()
         for alert in alert_list:
-            if alert.product_price < getProductprice(alert.product_url):
-                print("found one")
-        sleep(10)
+            if alert.product_price > getProductprice(alert.product_url):
+                alert1 = Alert.objects.get(id=alert.id)
+                alert1.product_price = getProductprice(alert.product_url)
+                sendEmail(alert, alert1.product_price)
+                alert1.save()
+
 
 
 

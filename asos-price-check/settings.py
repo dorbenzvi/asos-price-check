@@ -137,4 +137,3 @@ PASSWORD_HASHER =[
 
 LOGIN_URL = 'pricecheck/user_login'
 
-CELERY_BROKER_URL = "amqp://localhost"

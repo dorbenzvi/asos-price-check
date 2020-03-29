@@ -2,9 +2,9 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf.urls import url
 from . import views
-from pricecheck.views import AlertDeleteView
+from pricecheck.views import AlertDeleteView,activate
 
-
+activate()
 
 urlpatterns = [
     path('', views.home, name='Price-Home'),
