@@ -3,32 +3,46 @@
 
    {% load static %}
     {% block content %}
+    <div id="test" align="center" class="row">
+    <div class="col-12">
 
-    <div>
-
-    </div>
-    <div align="center" class="row">
-    <div class="col">
-    <form method="post">{{form.as_p}}
+        {% if user.is_authenticated %}
+    <form method="post">
+        {{form.as_p}}
         {% csrf_token %}
     <button type="submit" class="btn btn-primary">Get Price</button>
     </form>
+        {% endif %}
+        {% if not user.is_authenticated %}
+        <p>Please Login first!</p>
+        {% endif %}
+                {% if error %}
+            <div align="center" class="alert alert-danger" role="alert">
+            Please Check The Url
+            </div>
+                {% endif %}
 </div>
     </div>
-        <div align="center" class="row">
-        {% if error %}
-            <script>alert("Please check the url!")</script>
-            {% endif %}
+
+        <div class="row">
+
          {% if alerts %}
               {% for i in alerts %}
                 {% if user.email == i.user_Email %}
-                  <div id="{{ i.id }}" class="col-12 alertbox">
+<div class="col-sm-2">
+            <div class="card" style="width: 14rem;">
+              <img src="{{ i.product_img }}" class="card-img-top">
+              <div class="card-body">
+                <h5 class="card-title">Product name: {{ i.product_name }}</h5>
+              </div>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">Product link:</b></u> <a target="_blank" href="{{ i.product_url }}">Link To Product On Asos</a></li>
+                <li class="list-group-item">Product price:</u></b> {{ i.product_price }}$</li>
+                <li class="list-group-item"><a href="{% url "delete" i.id %}">Delete Alert</a></li>
+              </ul>
+            </div>
+</div>
 
-                      <P><b><u>Product name:</u></b> {{ i.product_name }}</P>
-                      <p><u><b>Product link:</b></u> <a target="_blank" href="{{ i.product_url }}">Link To Product On Asos</a> </p>
-                      <p><b><u>Product price:</u></b> {{ i.product_price }}$</p>
-                        <a href="{% url "delete" i.id %}">delete</a>
-                  </div>
             {% endif %}
               {% endfor %}
           {% endif %}

@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate,login,logout
 from time import sleep
 from pricecheck.sendMail import sendEmail
+from pricecheck.getImg import getImg
 
 def activate():
     t = threading.Thread(name='scraper', target=checkPriceDrop)
@@ -28,8 +29,11 @@ def home(request):
         form = forms.createAlert(request.POST)
         if form.is_valid():
             if check_Url(form.cleaned_data['product_url']):
-                price = getProductprice(form.cleaned_data['product_url'])
-                p = Alert(None, form.cleaned_data['product_name'], form.cleaned_data['product_url'], price,request.user.email)
+                product_url = form.cleaned_data['product_url']
+                price = getProductprice(product_url)
+                productId=getProductid(product_url)
+                product_img=getImg(product_url, productId)
+                p = Alert(None, form.cleaned_data['product_name'], product_url, price, request.user.email,product_img)
                 p.save()
             else:
                 return render(request, 'pricecheck/home.html', context={'error':"Url Error",'form': form, 'alerts': all_alerts_list})
@@ -57,6 +61,7 @@ def users(request):
 #Get price of product from asos.com
 def getProductprice(product_url):
     productId = getProductid(product_url)
+
     newProducturl = "https://www.asos.com/api/product/catalogue/v3/stockprice?productIds="+productId+"&store=ROW&currency=USD&keyStoreDataversion=ekbycqu-23"
     response = urllib.request.urlopen(newProducturl)
     data = json.loads(response.read())

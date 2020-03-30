@@ -7,13 +7,13 @@ class Alert(models.Model):
     product_url = models.URLField()
     product_price = models.FloatField()
     user_Email = models.EmailField()
-
+    product_img = models.URLField()
     def __str__(self):
         return self.product_name
 
 
 class Users(models.Model):
-    user_id = models.IntegerField(primary_key=True,auto_created=True)
+    user_id = models.IntegerField(primary_key=True, auto_created=True)
     user_email = models.EmailField(unique=True)
     user_name = models.CharField(max_length=50)
 

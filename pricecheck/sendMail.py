@@ -3,9 +3,11 @@
 import os
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+
+
 def sendEmail(alert, newPrice):
     message = Mail(
-        from_email='sender@gmail.com',
+        from_email='dor998877@gmail.com',
         to_emails=alert.user_Email,
         subject='Hey! The product '+alert.product_name+' Price has been Dropped!',
         html_content='<strong>Hey! The product '+alert.product_name+' Price has been Dropped from '+str(alert.product_price)+'$ To '+str(newPrice)+'$</strong>')

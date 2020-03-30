@@ -1,3 +1,6 @@
+beautifulsoup4
+BeautifulSoup
+django-sendgrid-webhook
 amqp==2.5.2
 argon2-cffi==19.2.0
 asgiref==3.2.5
