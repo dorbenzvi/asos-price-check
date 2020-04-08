@@ -1,7 +1,5 @@
 import re
 import requests
-from bs4 import BeautifulSoup
-from urllib.request import urlopen
 
 def getImg(productUrl, productId):
     newurl = re.findall("\/([0-9a-zA-Z+.-]+)[\/&| ]",productUrl)
